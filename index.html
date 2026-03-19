@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="pic/ikun.ico" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IPv4 地址查询</title>
     <style>
-        /* General Styles */
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: "Segoe UI", Arial, sans-serif;
             margin: 0;
             padding: 0;
             background: linear-gradient(135deg, #d9e7f3 0%, #c3cfe2 100%);
@@ -18,46 +16,60 @@
             align-items: center;
         }
 
-        /* IP Results Container */
         #ipResultsContainer {
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
             margin: 20px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.92);
             border-radius: 15px;
             padding: 15px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 600px;
+            max-width: 760px;
+            box-sizing: border-box;
         }
 
         #ipResultsContainer h3 {
             text-align: center;
             width: 100%;
             margin: 5px 0 0;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: #333;
         }
 
-        /* Table Styles */
+        .tips {
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 18px;
             border-radius: 10px;
             overflow: hidden;
+            background: #fff;
         }
 
         tr {
-            transition: all 0.3s ease;
+            transition: background-color 0.2s ease;
         }
 
-        th, td {
-            padding: 15px;
+        tr:hover {
+            background-color: #f7fafc;
+        }
+
+        th,
+        td {
+            padding: 12px 14px;
             text-align: left;
             border-bottom: 1px solid #eee;
+            vertical-align: middle;
         }
 
         tr:last-child td,
@@ -72,84 +84,109 @@
 
         .ipregion {
             white-space: nowrap;
-            font-weight: 900;
-            font-size: 1rem;
-            width: 15%;
+            font-weight: 800;
+            font-size: 0.95rem;
+            width: 12%;
         }
 
         .apiserver {
             white-space: nowrap;
             color: #888;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 500;
+            width: 16%;
         }
 
         .ip {
             white-space: nowrap;
-            font-weight: 500;
-            color: #333;
-            font-size: 0.875rem;
+            font-weight: 600;
+            color: #222;
+            font-size: 0.92rem;
+            width: 22%;
         }
 
         .ipaddr {
             color: #1f2937;
-            font-size: 0.75rem;
+            font-size: 0.82rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 200px;
+            max-width: 240px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
+        .status {
+            white-space: nowrap;
+            font-size: 0.78rem;
+            color: #666;
+            width: 12%;
+        }
+
+        .status.loading {
+            color: #2563eb;
+        }
+
+        .status.success {
+            color: #059669;
+        }
+
+        .status.partial {
+            color: #d97706;
+        }
+
+        .status.error {
+            color: #dc2626;
+        }
+
+        @media (max-width: 640px) {
             #ipResultsContainer {
                 margin: 10px;
                 width: calc(100% - 20px);
                 max-width: none;
-                position: relative;
-                box-sizing: border-box;
                 padding: 12px;
             }
 
             #ipResultsContainer h3 {
-                margin-bottom: 10px;
-                font-size: 1.2rem;
+                margin-bottom: 8px;
+                font-size: 1.15rem;
+            }
+
+            .tips {
+                font-size: 0.78rem;
             }
 
             table {
-                margin-top: 10px;
+                margin-top: 12px;
             }
 
-            table, tbody {
+            table,
+            tbody {
                 display: block;
                 width: 100%;
             }
 
             tr {
                 display: grid;
-                grid-template-areas: 
+                grid-template-areas:
                     "region apiserver"
-                    "ip ip"
+                    "ip status"
                     "addr addr";
-                grid-template-columns: auto 1fr;
+                grid-template-columns: 1fr auto;
                 background-color: #f9f9f9;
                 margin-bottom: 10px;
+                border-radius: 10px;
+                overflow: hidden;
             }
 
-            td, th {
+            td,
+            th {
                 display: block;
                 border: none;
                 padding: 6px 8px;
             }
 
-            td.ip {
-                padding: 3px 8px 0;
-            }
-
             .ipregion {
                 grid-area: region;
-                font-size: 0.75rem;
-                padding-right: 0;
+                font-size: 0.78rem;
                 display: flex;
                 align-items: center;
             }
@@ -157,8 +194,7 @@
             .apiserver {
                 grid-area: apiserver;
                 text-align: right;
-                font-size: 0.7rem;
-                color: #666;
+                font-size: 0.72rem;
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
@@ -166,132 +202,316 @@
 
             .ip {
                 grid-area: ip;
-                font-size: 0.875rem;
+                font-size: 0.88rem;
                 text-align: left;
+            }
+
+            .status {
+                grid-area: status;
+                text-align: right;
+                font-size: 0.74rem;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
             }
 
             .ipaddr {
                 grid-area: addr;
-                font-size: 0.75rem;
+                font-size: 0.76rem;
                 max-width: none;
                 text-align: left;
                 color: #666;
-                border-bottom: 1px solid #c4c1c1;
+                border-top: 1px solid #ececec;
             }
         }
     </style>
+<title>公网IP查询 - 我的IP、本机IP、IPv4地址在线查询</title>
+<meta name="description" content="免费在线查询当前公网IP、本机IP、IPv4地址、IP归属地和运营商信息，支持多个接口结果对比，快速查看我的IP、外网IP和当前网络出口地址。" />
+<meta name="keywords" content="公网IP查询,我的IP,本机IP,IP地址查询,IPv4地址查询,外网IP查询,当前IP查询,IP归属地查询,IP所在地查询,运营商查询,ASN查询,ISP查询,网络出口IP" />
+<meta name="robots" content="index,follow" />
+<meta name="author" content="你的站点名称" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
 </head>
 <body>
     <div id="ipResultsContainer">
-        <h3>IPv4 地址查询</h3>
+<h3>公网IP / IPv4 地址查询</h3>
+        <div class="tips"> 免费在线查询当前公网IP、本机IP、IPv4地址、IP归属地和运营商信息。
+    支持多个接口结果对比，帮助你快速查看当前网络出口地址</div>
         <table>
             <tbody></tbody>
         </table>
     </div>
+
     <script>
+        const tableBody = document.querySelector("#ipResultsContainer table tbody");
+
+        function joinSafe(...parts) {
+            return parts
+                .flat(Infinity)
+                .filter(v => v !== undefined && v !== null && String(v).trim() !== "")
+                .map(v => String(v).trim())
+                .join(" ") || "";
+        }
+
+        function safeText(value, fallback = "未知") {
+            if (value === undefined || value === null) return fallback;
+            const text = String(value).trim();
+            return text ? text : fallback;
+        }
+
+        function isValidIPv4(ip) {
+            if (!ip || typeof ip !== "string") return false;
+            const reg =
+                /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/;
+            return reg.test(ip.trim());
+        }
+
+        async function fetchWithTimeout(url, options = {}, timeout = 6000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeout);
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                clearTimeout(timer);
+                return response;
+            } catch (error) {
+                clearTimeout(timer);
+                throw error;
+            }
+        }
+
         const ipProviders = [
             {
-                region: '国内',
-                apiserver: 'ipip.net',
-                url: 'https://myip.ipip.net/json',
-                ip: d => d.data?.ip || '未知',
-                addr: d => d.data?.location ? `${d.data.location[0]} ${d.data.location[1]} ${d.data.location[2]} ${d.data.location[4]}` : '未知'
+                region: "国内",
+                apiserver: "ipip.net",
+                url: "https://myip.ipip.net/json",
+                parse(data) {
+                    const ip = data?.data?.ip ?? "";
+                    const addr = Array.isArray(data?.data?.location)
+                        ? joinSafe(data.data.location)
+                        : "";
+                    return { ip, addr };
+                }
             },
+
             {
-                region: '国内',
-                apiserver: '百度智能云',
-                url: 'https://qifu-api.baidubce.com/ip/local/geo/v1/district',
-                ip: d => d.ip || '未知',
-                addr: d => d.data ? `${d.data.country} ${d.data.prov} ${d.data.city} ${d.data.district} ${d.data.isp} ${d.data.zipcode}` : '未知'
+                region: "国外",
+                apiserver: "ip.sb",
+                url: "https://api.ip.sb/geoip",
+                parse(data) {
+                    const ip = data?.ip ?? "";
+                    const addr = joinSafe(
+                        data?.country,
+                        data?.region,
+                        data?.city,
+                        data?.isp
+                    );
+                    return { ip, addr };
+                }
             },
+
             {
-                region: '国外',
-                apiserver: 'ip.sb',
-                url: 'https://api.ip.sb/geoip',
-                ip: d => d.ip || '未知',
-                addr: d => d.country ? `${d.country} ${d.isp}` : '未知'
-            },
-            {
-                region: '国外',
-                apiserver: 'vore.top',
-                url: 'https://api.vore.top/api/IPdata?ip=',
-                ip: d => d.ipinfo?.text || '未知',
-                addr: d => d.adcode ? `${d.adcode.p} ${d.adcode.c}` : '未知'
-            },
-            {
-                region: '国外',
-                apiserver: 'ipapi.co',
-                url: 'https://ipapi.co/json',
-                ip: d => d.ip || '未知',
-                addr: d => d.city ? `${d.city} ${d.asn} ${d.org}` : '未知'
-            },
-            {
-                region: '国外',
-                apiserver: 'ipinfo.io',
-                url: 'https://ipinfo.io/json',
-                ip: d => d.ip || '未知',
-                addr: d => d.region ? `${d.region} ${d.org}` : '未知'
+                region: "国外",
+                apiserver: "ipinfo.io",
+                url: "https://ipinfo.io/json",
+                parse(data) {
+                    const ip = data?.ip ?? "";
+                    const addr = joinSafe(
+                        data?.country,
+                        data?.region,
+                        data?.city,
+                        data?.org
+                    );
+                    return { ip, addr };
+                }
             }
         ];
 
-        const tableBody = document.querySelector('#ipResultsContainer table tbody');
-
         function initializeTable() {
-            tableBody.innerHTML = ''; // Clear table before initialization
+            tableBody.innerHTML = "";
+
             ipProviders.forEach(provider => {
-                const row = document.createElement('tr');
+                const row = document.createElement("tr");
                 row.dataset.apiserver = provider.apiserver;
 
-                const regionCell = document.createElement('th');
+                const regionCell = document.createElement("th");
                 regionCell.textContent = provider.region;
-                regionCell.classList.add('ipregion');
+                regionCell.className = "ipregion";
                 row.appendChild(regionCell);
 
-                const apiServerCell = document.createElement('td');
+                const apiServerCell = document.createElement("td");
                 apiServerCell.textContent = provider.apiserver;
-                apiServerCell.classList.add('apiserver');
+                apiServerCell.className = "apiserver";
                 row.appendChild(apiServerCell);
 
-                const ipCell = document.createElement('td');
-                ipCell.textContent = '获取中...';
-                ipCell.classList.add('ip');
+                const ipCell = document.createElement("td");
+                ipCell.textContent = "获取中...";
+                ipCell.className = "ip";
                 row.appendChild(ipCell);
 
-                const addrCell = document.createElement('td');
-                addrCell.classList.add('ipaddr');
+                const statusCell = document.createElement("td");
+                statusCell.textContent = "查询中";
+                statusCell.className = "status loading";
+                row.appendChild(statusCell);
+
+                const addrCell = document.createElement("td");
+                addrCell.textContent = "";
+                addrCell.className = "ipaddr";
                 row.appendChild(addrCell);
 
                 tableBody.appendChild(row);
             });
         }
 
-        async function fetchIP(provider) {
-            const row = tableBody.querySelector(`tr[data-apiserver="${provider.apiserver}"]`);
+        function updateRow(providerName, { ip = "", addr = "", status = "", statusClass = "" }) {
+            const row = tableBody.querySelector(`tr[data-apiserver="${providerName}"]`);
             if (!row) return;
-            const ipCell = row.querySelector('.ip');
-            const addrCell = row.querySelector('.ipaddr');
+
+            const ipCell = row.querySelector(".ip");
+            const addrCell = row.querySelector(".ipaddr");
+            const statusCell = row.querySelector(".status");
+
+            ipCell.textContent = safeText(ip, "未知");
+            addrCell.textContent = safeText(addr, "信息不完整");
+            statusCell.textContent = status;
+            statusCell.className = `status ${statusClass}`.trim();
+        }
+
+        async function fetchIP(provider) {
+            updateRow(provider.apiserver, {
+                ip: "获取中...",
+                addr: "",
+                status: "查询中",
+                statusClass: "loading"
+            });
 
             try {
-                const res = await fetch(provider.url, {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' }
+                const response = await fetchWithTimeout(
+                    provider.url,
+                    {
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json"
+                        },
+                        cache: "no-store"
+                    },
+                    6000
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                const parsed = provider.parse(data);
+
+                const ip = safeText(parsed.ip, "未知");
+                const addr = parsed.addr ? safeText(parsed.addr, "信息不完整") : "信息不完整";
+
+                let status = "成功";
+                let statusClass = "success";
+
+                if (ip === "未知" || addr === "信息不完整") {
+                    status = "部分成功";
+                    statusClass = "partial";
+                }
+
+                if (ip !== "未知" && !isValidIPv4(ip)) {
+                    status = "返回非 IPv4";
+                    statusClass = "partial";
+                }
+
+                updateRow(provider.apiserver, {
+                    ip,
+                    addr,
+                    status,
+                    statusClass
                 });
-                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                const data = await res.json();
-                ipCell.textContent = provider.ip(data);
-                addrCell.textContent = provider.addr(data);
             } catch (error) {
                 console.error(`Error fetching from ${provider.apiserver}:`, error);
-                ipCell.textContent = '查询失败';
-                addrCell.textContent = '查询失败';
+                updateRow(provider.apiserver, {
+                    ip: "查询失败",
+                    addr: "查询失败",
+                    status: error.name === "AbortError" ? "请求超时" : "请求失败",
+                    statusClass: "error"
+                });
             }
         }
 
-        (async () => {
+        async function loadAllIPs() {
             initializeTable();
-            const requests = ipProviders.map(provider => fetchIP(provider));
-            await Promise.allSettled(requests);
-        })();
+            await Promise.allSettled(ipProviders.map(provider => fetchIP(provider)));
+        }
+
+        loadAllIPs();
     </script>
 </body>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "我的公网IP是多少？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "打开本页面即可查看当前网络对外显示的公网IP地址。如果你正在使用宽带、移动网络、代理或VPN，显示的结果可能会随网络出口变化而改变。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "本机IP和公网IP是一样的吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "不一定。本机IP通常是设备在局域网内使用的内网地址，例如 192.168.x.x 或 10.x.x.x；公网IP则是你的网络访问互联网时对外显示的地址。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "为什么我查询到的是 IPv4 地址？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "因为当前页面主要展示的是IPv4公网地址。部分网络环境同时支持IPv4和IPv6，但很多设备和网站仍然优先使用IPv4进行访问和展示。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "为什么不同接口显示的IP归属地不一致？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "不同查询接口使用的数据源不同，数据库更新时间、运营商识别方式和地理位置映射策略也不同，因此同一个IP地址可能出现不同的归属地结果。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "公网IP会变化吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "会。大多数家庭宽带和移动网络使用的是动态公网IP，运营商可能在重新拨号、网络重连或更换出口节点后分配新的公网IP。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "这个工具能查到我的真实位置吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "一般不能精确到具体住址。IP归属地通常只能定位到国家、省份、城市或运营商层级，结果仅供参考，不代表精确物理位置。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "使用代理或 VPN 会影响查询结果吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "会。如果你开启了代理、VPN或其他中转服务，页面显示的通常是代理服务器或VPN出口节点的公网IP，而不是你本地宽带的真实出口地址。"
+      }
+    }
+  ]
+}
+</script>
 </html>
